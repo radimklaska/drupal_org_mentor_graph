@@ -2,7 +2,7 @@
 
 Loads mentors using drupal.org API and visualizes the result using graphviz.
 
-![](./examples/229127_radimklaska_depth_10/do_mentors_graph_229127_radimklaska_depth_3.png)
+![](./examples/229127_radimklaska_depth_10/229127_radimklaska_depth_3.png)
 
 ## Requirements
 
