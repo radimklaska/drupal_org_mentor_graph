@@ -2,9 +2,24 @@ import urllib.request
 import json
 import array
 import os
+import argparse
 
-start_user = 229127
-depth = 3
+parser = argparse.ArgumentParser()
+parser.add_argument("--user", "-u", help="Set the Drupal.org user ID to start from", type=int)
+parser.add_argument("--depth", "-d", help="How deep to go down the rabbit hole", type=int)
+args = parser.parse_args()
+
+if args.user:
+    print("Using Drupal.org ID #%s" % args.user)
+else:
+    print("Please supply a --user argument")
+    exit(1)
+
+if args.depth:
+    print("Using depth of %s" % args.depth)
+else:
+    args.depth = 3
+    print("Using default depth of %s" % args.depth)
 
 def get_mentors(uid):
     with urllib.request.urlopen("https://www.drupal.org/api-d7/user.json?uid=" + str(uid)) as url:
@@ -12,7 +27,7 @@ def get_mentors(uid):
 
     mentors = array.array('i', [])
     for mentor in user["list"][0]["field_mentors"]:
-        mentors.append(int(mentor["id"]));
+        mentors.append(int(mentor["id"]))
     return mentors
 
 def get_name(uid):
@@ -37,12 +52,12 @@ def process_mentors(uid, depth, processed):
         f.write("	\"" + current + "\" -> \"" + mentor_name + "\";\n")
         process_mentors(mentor, depth - 1, processed)
     
-filename = "do_mentors_graph_" + get_name(start_user) + "_depth_" + str(depth)
+filename = "do_mentors_graph_" + get_name(args.user) + "_depth_" + str(args.depth)
 
 f = open(filename + ".dot", "w")
 f.write("digraph G {\n")
 processed = array.array('i', [])
-process_mentors(start_user, depth, processed)
+process_mentors(args.user, args.depth, processed)
 f.write("}\n")
 f.close()
 
